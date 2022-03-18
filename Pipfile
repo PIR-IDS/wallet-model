@@ -12,8 +12,9 @@ generate = "python -m hexrec xxd -i output/model.tflite output/model.cc"
 [dev-packages]
 
 [packages]
-tensorflow = "2.1.4"
+numpy = "1.22.3"
+tensorflow = "2.4.0"
 hexrec = "0.2.3"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"

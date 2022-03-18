@@ -16,7 +16,7 @@ linux: `pip install --upgrade pyenv`
 
 ##3:
 
-windows: `pyenv install 3.7.9 && pipenv --python %USERPROFILE%\.pyenv\pyenv-win\versions\3.7.9\python.exe install --dev`
+windows: `pyenv install 3.8.10 && pipenv --python %USERPROFILE%\.pyenv\pyenv-win\versions\3.8.10\python.exe install --dev`
 
 linux: `pipenv install --dev`
 
