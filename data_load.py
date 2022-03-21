@@ -90,7 +90,7 @@ class DataLoader(object):
         for idx, (data, label) in enumerate(zip(data, label)):
             if (data == []):
                 print("ID : " + str(idx))
-                continue
+                continue  # very dirty hack but we don't have time (fix this later)
             padded_data = self.pad(data, self.seq_length, self.dim)
             for num in range(padded_num):
                 features[padded_num * idx + num] = padded_data[num]
