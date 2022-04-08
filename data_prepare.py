@@ -37,8 +37,8 @@ import random
 LABEL_NAME = "gesture"
 DATA_NAME = "accel_ms2_xyz"
 folders = ["wallet"]
-names = [
-]
+nb_negative = 5
+nb_positive = 10
 
 
 def prepare_original_data(folder, name, data, file_to_read):  # pylint: disable=redefined-outer-name
@@ -149,12 +149,12 @@ def write_data(data_to_write, path):
 if __name__ == "__main__":
     data = []  # pylint: disable=redefined-outer-name
     for idx1, folder in enumerate(folders):
-        for idx2 in range(14):
+        for idx2 in range(nb_positive):
             prepare_original_data(folder, "test%d" % (idx2 + 1), data,
-                                  "./train/%s/output_%s_test%d.txt" % (folder, folder, idx2 + 1))
-    for idx in range(25):
+                                "./train/%s/output_%s_test%d.txt" % (folder, folder, idx2 + 1))
+    for idx in range(nb_negative):
         prepare_original_data("negative", "negative%d" % (idx + 1), data,
-                              "./train/negative/output_negative_test%d.txt" % (idx + 1))
+                            "./train/negative/output_negative_%d.txt" % (idx + 1))
     generate_negative_data(data)
     print("data_length: " + str(len(data)))
     if not os.path.exists("./output/data"):
