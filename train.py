@@ -1,23 +1,3 @@
-# Lint as: python3
-# Copyright 2019 The TensorFlow Authors. All Rights Reserved.
-# Edited by Noé Chauveau and Romain Monier for the PIR-IDS project
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-# pylint: disable=redefined-outer-name
-# pylint: disable=g-bad-import-order
-"""Build and train neural networks."""
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -29,6 +9,8 @@ from data_load import DataLoader
 
 import numpy as np
 import tensorflow as tf
+
+SEQ_LENGTH = 256  #number of lines in the data files
 
 logdir = "output/logs/scalars/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
@@ -52,8 +34,9 @@ def build_cnn(seq_length):
     """Builds a convolutional neural network in Keras."""
     model = tf.keras.Sequential([
         tf.keras.layers.Conv2D(
-            8, (4, 3),
-            padding="same",
+            8,  # filters
+            (4, 3), # convolution window size
+            padding="same", 
             activation="relu",
             input_shape=(seq_length, 3, 1)),  # output_shape=(batch, 128, 3, 8)
         tf.keras.layers.MaxPool2D((3, 3)),  # (batch, 42, 1, 8)
@@ -75,21 +58,6 @@ def build_cnn(seq_length):
     return model, model_path
 
 
-def build_lstm(seq_length):
-    """Builds an LSTM in Keras."""
-    model = tf.keras.Sequential([
-        tf.keras.layers.Bidirectional(
-            tf.keras.layers.LSTM(22),
-            input_shape=(seq_length, 3)),  # output_shape=(batch, 44)
-        tf.keras.layers.Dense(4, activation="sigmoid")  # (batch, 4)
-    ])
-    model_path = os.path.join("./netmodels", "LSTM")
-    print("Built LSTM.")
-    if not os.path.exists(model_path):
-        os.makedirs(model_path)
-    return model, model_path
-
-
 def load_data(train_data_path, valid_data_path, test_data_path, seq_length):
     data_loader = DataLoader(train_data_path,
                              valid_data_path,
@@ -103,10 +71,8 @@ def load_data(train_data_path, valid_data_path, test_data_path, seq_length):
 def build_net(args, seq_length):
     if args.model == "CNN":
         model, model_path = build_cnn(seq_length)
-    elif args.model == "LSTM":
-        model, model_path = build_lstm(seq_length)
     else:
-        print("Please input correct model name.(CNN  LSTM)")
+        print("Please input correct model name.(CNN)")
     return model, model_path
 
 
@@ -180,7 +146,7 @@ if __name__ == "__main__":
     parser.add_argument("--model", "-m")
     args = parser.parse_args()
 
-    seq_length = 128
+    seq_length = SEQ_LENGTH
 
     print("Start to load data...")
 
