@@ -39,6 +39,7 @@ DATA_NAME = "accel_ms2_xyz"
 folders = ["wallet"]
 nb_negative = 5
 nb_positive = 10
+taille_data = 256
 
 
 def prepare_original_data(folder, name, data, file_to_read):  # pylint: disable=redefined-outer-name
@@ -52,7 +53,7 @@ def prepare_original_data(folder, name, data, file_to_read):  # pylint: disable=
             data_new["name"] = name
             for idx, line in enumerate(lines):  # pylint: disable=unused-variable,redefined-outer-name
                 if len(line) == 3:
-                    if line[2] == "-" and data_new[DATA_NAME]:
+                    if line[2] == "-" and line[0] == "-" and data_new[DATA_NAME]:  ## not sure about the  and line[0] == "-" condition
                         data.append(data_new)
                         data_new = {}
                         data_new[LABEL_NAME] = folder
@@ -70,7 +71,7 @@ def prepare_original_data(folder, name, data, file_to_read):  # pylint: disable=
             data_new["name"] = name
             for idx, line in enumerate(lines):
                 if len(line) == 3 and line[2] != "-":
-                    if len(data_new[DATA_NAME]) == 120:
+                    if len(data_new[DATA_NAME]) == taille_data:
                         data.append(data_new)
                         data_new = {}
                         data_new[LABEL_NAME] = folder
@@ -82,22 +83,22 @@ def prepare_original_data(folder, name, data, file_to_read):  # pylint: disable=
 
 
 def generate_negative_data(data):  # pylint: disable=redefined-outer-name
-    """Generate negative data labeled as 'negative6~8'."""
+    """Generate 3 more sets of negative data"""
     # Big movement -> around straight line
     for i in range(100):
         if i > 80:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": "negative8"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+3}"}
         elif i > 60:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": "negative7"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+2}"}
         else:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": "negative6"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+1}"}
         start_x = (random.random() - 0.5) * 2000
         start_y = (random.random() - 0.5) * 2000
         start_z = (random.random() - 0.5) * 2000
         x_increase = (random.random() - 0.5) * 10
         y_increase = (random.random() - 0.5) * 10
         z_increase = (random.random() - 0.5) * 10
-        for j in range(128):
+        for j in range(taille_data):
             dic[DATA_NAME].append([
                 start_x + j * x_increase + (random.random() - 0.5) * 6,
                 start_y + j * y_increase + (random.random() - 0.5) * 6,
@@ -107,12 +108,12 @@ def generate_negative_data(data):  # pylint: disable=redefined-outer-name
     # Random
     for i in range(100):
         if i > 80:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": "negative8"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+3}"}
         elif i > 60:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": "negative7"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+2}"}
         else:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": "negative6"}
-        for j in range(128):
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+1}"}
+        for j in range(taille_data):
             dic[DATA_NAME].append([(random.random() - 0.5) * 1000,
                                    (random.random() - 0.5) * 1000,
                                    (random.random() - 0.5) * 1000])
@@ -120,15 +121,15 @@ def generate_negative_data(data):  # pylint: disable=redefined-outer-name
     # Stay still
     for i in range(100):
         if i > 80:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": "negative8"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+3}"}
         elif i > 60:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": "negative7"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+2}"}
         else:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": "negative6"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+1}"}
         start_x = (random.random() - 0.5) * 2000
         start_y = (random.random() - 0.5) * 2000
         start_z = (random.random() - 0.5) * 2000
-        for j in range(128):
+        for j in range(taille_data):
             dic[DATA_NAME].append([
                 start_x + (random.random() - 0.5) * 40,
                 start_y + (random.random() - 0.5) * 40,
