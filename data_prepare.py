@@ -37,8 +37,8 @@ import random
 LABEL_NAME = "gesture"
 DATA_NAME = "accel_ms2_xyz"
 folders = ["wallet"]
-nb_negative = 5
-nb_positive = 10
+nb_negative = 6
+nb_positive = 5
 taille_data = 256
 
 
