@@ -28,6 +28,8 @@ It will generate a new file with the following structure:
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from data_rotation import create_file_for_rotation
+from data_rotation import data_in_list
 
 import csv
 import json
@@ -87,11 +89,11 @@ def generate_negative_data(data):  # pylint: disable=redefined-outer-name
     # Big movement -> around straight line
     for i in range(100):
         if i > 80:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+3}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+3}"}
         elif i > 60:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+2}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+2}"}
         else:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+1}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+1}"}
         start_x = (random.random() - 0.5) * 2000
         start_y = (random.random() - 0.5) * 2000
         start_z = (random.random() - 0.5) * 2000
@@ -108,11 +110,11 @@ def generate_negative_data(data):  # pylint: disable=redefined-outer-name
     # Random
     for i in range(100):
         if i > 80:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+3}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+3}"}
         elif i > 60:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+2}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+2}"}
         else:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+1}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+1}"}
         for j in range(taille_data):
             dic[DATA_NAME].append([(random.random() - 0.5) * 1000,
                                    (random.random() - 0.5) * 1000,
@@ -121,11 +123,11 @@ def generate_negative_data(data):  # pylint: disable=redefined-outer-name
     # Stay still
     for i in range(100):
         if i > 80:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+3}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+3}"}
         elif i > 60:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+2}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+2}"}
         else:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+1}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+1}"}
         start_x = (random.random() - 0.5) * 2000
         start_y = (random.random() - 0.5) * 2000
         start_z = (random.random() - 0.5) * 2000
@@ -146,16 +148,32 @@ def write_data(data_to_write, path):
             f.write(dic)
             f.write("\n")
 
+#create_file_for_rotation("output/custom_train/wallet/custom_output_wallet_test1.txt", data_in_list("train/wallet", "output_wallet_test1.txt"))
 
 if __name__ == "__main__":
+    for i in range(nb_positive):
+        create_file_for_rotation("output/custom_train/wallet", data_in_list("train/wallet", f"output_wallet_test{i+1}.txt"),f"custom_output_wallet_test{i+1}.txt" )
+
+    for i in range(nb_negative):
+        create_file_for_rotation("output/custom_train/negative", data_in_list("train/negative", f"output_negative_{i+1}.txt"), f"custom_output_negative_{i+1}.txt")
+
     data = []  # pylint: disable=redefined-outer-name
     for idx1, folder in enumerate(folders):
         for idx2 in range(nb_positive):
             prepare_original_data(folder, "test%d" % (idx2 + 1), data,
                                 "./train/%s/output_%s_test%d.txt" % (folder, folder, idx2 + 1))
+
     for idx in range(nb_negative):
         prepare_original_data("negative", "negative%d" % (idx + 1), data,
                             "./train/negative/output_negative_%d.txt" % (idx + 1))
+
+    for idx1, folder in enumerate(folders):
+        for idx2 in range(nb_positive):
+            prepare_original_data(folder, "test%d" % (idx2 + 1+ nb_positive), data,
+                                "./output/custom_train/%s/custom_output_%s_test%d.txt" % (folder, folder, idx2 + 1))
+    for idx in range(nb_negative):
+        prepare_original_data("negative", "negative%d" % (idx + 1+ nb_negative), data,
+                            "./output/custom_train/negative/custom_output_negative_%d.txt" % (idx + 1))
     generate_negative_data(data)
     print("data_length: " + str(len(data)))
     if not os.path.exists("./output/data"):

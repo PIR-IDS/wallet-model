@@ -80,9 +80,10 @@ def rotation_7( liste):
     r = rotation_6( liste)
     return rotation_1(r) 
 
-def create_file_for_rotation(path, liste ):
-    #creation of a file with the new data corresponding with the 7 rotations 
-    with open(path , 'w', newline='') as csvfile:
+def create_file_for_rotation(path, liste, file_name ):
+    #creation of a file with the new data corresponding with the 7 rotations
+    pathlib.Path(path ).mkdir(parents=True, exist_ok=True) 
+    with open(str(path)+"/"+str(file_name) , 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerows(rotation_1(liste))
         writer.writerows(rotation_2(liste))
@@ -94,4 +95,4 @@ def create_file_for_rotation(path, liste ):
 
 
 #pathlib.Path("output/custom_train").mkdir(parents=True, exist_ok=True)
-create_file_for_rotation("output/custom_train/custom_output_wallet_test1.txt", data_in_list("train/wallet", "output_wallet_test1.txt"))
+#create_file_for_rotation("output/custom_train/wallet/custom_output_wallet_test1.txt", data_in_list("train/wallet", "output_wallet_test1.txt"))
