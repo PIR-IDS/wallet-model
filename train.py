@@ -17,7 +17,7 @@ tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
 
 
 def reshape_function(data, label):
-    reshaped_data = tf.reshape(data, [-1, 3, 1])
+    reshaped_data = tf.reshape(data, [-1, 2, 1])
     return reshaped_data, label
 
 
@@ -35,11 +35,11 @@ def build_cnn(seq_length):
     model = tf.keras.Sequential([
         tf.keras.layers.Conv2D(
             8,  # filters
-            (4, 3), # convolution window size
+            (4, 2), # convolution window size
             padding="same", 
             activation="relu",
-            input_shape=(seq_length, 3, 1)),  # output_shape=(batch, 128, 3, 8)
-        tf.keras.layers.MaxPool2D((3, 3)),  # (batch, 42, 1, 8)
+            input_shape=(seq_length, 2, 1)),  # output_shape=(batch, 128, 2, 8)
+        tf.keras.layers.MaxPool2D((3, 2)),  # (batch, 42, 1, 8)
         tf.keras.layers.Dropout(0.1),  # (batch, 42, 1, 8)
         tf.keras.layers.Conv2D(16, (4, 1), padding="same",
                                activation="relu"),  # (batch, 42, 1, 16)

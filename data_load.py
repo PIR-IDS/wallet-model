@@ -37,7 +37,7 @@ class DataLoader(object):
 
     def __init__(self, train_data_path, valid_data_path, test_data_path,
                  seq_length):
-        self.dim = 3
+        self.dim = 2
         self.seq_length = seq_length
         self.label2id = {"wallet": 0, "negative": 1}
         self.train_data, self.train_label, self.train_len = self.get_data_file(

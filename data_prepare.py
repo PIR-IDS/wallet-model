@@ -55,15 +55,15 @@ def prepare_original_data(folder, name, data, file_to_read):  # pylint: disable=
             data_new[DATA_NAME] = []
             data_new["name"] = name
             for idx, line in enumerate(lines):  # pylint: disable=unused-variable,redefined-outer-name
-                if len(line) == 3:
-                    if line[2] == "-" and line[0] == "-" and data_new[DATA_NAME]:  ## not sure about the  and line[0] == "-" condition
+                if len(line) == 2:
+                    if line[0] == "-" and data_new[DATA_NAME]:  ## not sure about the  and line[0] == "-" condition
                         data.append(data_new)
                         data_new = {}
                         data_new[LABEL_NAME] = folder
                         data_new[DATA_NAME] = []
                         data_new["name"] = name
-                    elif line[2] != "-":
-                        data_new[DATA_NAME].append([float(i) for i in line[0:3]])
+                    elif line[0] != "-":
+                        data_new[DATA_NAME].append([float(i) for i in line[0:2]])
             data.append(data_new)
     else:
         with open(file_to_read, "r") as f:
@@ -73,7 +73,7 @@ def prepare_original_data(folder, name, data, file_to_read):  # pylint: disable=
             data_new[DATA_NAME] = []
             data_new["name"] = name
             for idx, line in enumerate(lines):
-                if len(line) == 3 and line[2] != "-":
+                if len(line) == 2 and line[0] != "-":
                     if len(data_new[DATA_NAME]) == taille_data:
                         data.append(data_new)
                         data_new = {}
@@ -81,7 +81,7 @@ def prepare_original_data(folder, name, data, file_to_read):  # pylint: disable=
                         data_new[DATA_NAME] = []
                         data_new["name"] = name
                     else:
-                        data_new[DATA_NAME].append([float(i) for i in line[0:3]])
+                        data_new[DATA_NAME].append([float(i) for i in line[0:2]])
             data.append(data_new)
 
 
@@ -165,7 +165,7 @@ if __name__ == "__main__":
     for idx in range(nb_negative):
         prepare_original_data("negative", "negative%d" % (idx + 1), data,
                             "./output/custom_train/negative/custom_output_negative_norm_%d.txt" % (idx + 1))
-    generate_negative_data(data)
+    #generate_negative_data(data)
     print("data_length: " + str(len(data)))
     if not os.path.exists("./output/data"):
         os.makedirs("./output/data")
