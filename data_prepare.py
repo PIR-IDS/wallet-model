@@ -29,6 +29,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+from data_norm import data_norm
+from data_norm import data_in_list
+
 import csv
 import json
 import os
@@ -37,8 +40,8 @@ import random
 LABEL_NAME = "gesture"
 DATA_NAME = "accel_ms2_xyz"
 folders = ["wallet"]
-nb_negative = 5
-nb_positive = 10
+nb_negative = 1
+nb_positive = 1
 taille_data = 256
 
 
@@ -148,14 +151,20 @@ def write_data(data_to_write, path):
 
 
 if __name__ == "__main__":
+    for i in range(nb_positive):
+        data_norm("output/custom_train/wallet", data_in_list("train/wallet", f"output_wallet_gyroscope_test{i+1}.txt"),f"custom_output_wallet_norm_test{i+1}.txt" )
+
+    for i in range(nb_negative):
+        data_norm("output/custom_train/negative", data_in_list("train/negative", f"output_negative_gyroscope_test{i+1}.txt"), f"custom_output_negative_norm_{i+1}.txt")
+
     data = []  # pylint: disable=redefined-outer-name
     for idx1, folder in enumerate(folders):
         for idx2 in range(nb_positive):
             prepare_original_data(folder, "test%d" % (idx2 + 1), data,
-                                "./train/%s/output_%s_test%d.txt" % (folder, folder, idx2 + 1))
+                                "./output/custom_train/%s/custom_output_%s_norm_test%d.txt" % (folder, folder, idx2 + 1))
     for idx in range(nb_negative):
         prepare_original_data("negative", "negative%d" % (idx + 1), data,
-                            "./train/negative/output_negative_%d.txt" % (idx + 1))
+                            "./output/custom_train/negative/custom_output_negative_norm_%d.txt" % (idx + 1))
     generate_negative_data(data)
     print("data_length: " + str(len(data)))
     if not os.path.exists("./output/data"):
