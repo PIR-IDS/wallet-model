@@ -26,7 +26,9 @@ def data_norm(path, liste, file_name ):
         new_liste_row = list()
         if len(row)!= 0:
             if row[0] == '-' :
-                new_liste_row.append(['-'])
+                new_liste_row.append([])
+                new_liste_row.append([])
+                new_liste_row.append(['-','-'])
             else:
                 norm = (row[0])**2 + (row[1])**2 + (row[2])**2
                 norm2 = (row[3])**2 + (row[4])**2 + (row[5])**2

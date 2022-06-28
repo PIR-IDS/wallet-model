@@ -40,9 +40,9 @@ import random
 LABEL_NAME = "gesture"
 DATA_NAME = "accel_ms2_xyz"
 folders = ["wallet"]
-nb_negative = 1
-nb_positive = 1
-taille_data = 256
+nb_negative = 2
+nb_positive = 7
+taille_data = 96
 
 
 def prepare_original_data(folder, name, data, file_to_read):  # pylint: disable=redefined-outer-name
