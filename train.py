@@ -38,14 +38,14 @@ def build_cnn(seq_length):
             (4, 3), # convolution window size
             padding="same", 
             activation="relu",
-            input_shape=(seq_length, 3, 1)),  # output_shape=(batch, 128, 3, 8)
-        tf.keras.layers.MaxPool2D((3, 3)),  # (batch, 42, 1, 8)
-        tf.keras.layers.Dropout(0.1),  # (batch, 42, 1, 8)
+            input_shape=(seq_length, 3, 1)),  # output_shape=(batch, 96, 3, 12)
+        tf.keras.layers.MaxPool2D((3, 3)),  # (batch, 32, 1, 12)
+        tf.keras.layers.Dropout(0.1),  # (batch, 32, 1, 12)
         tf.keras.layers.Conv2D(24, (4, 1), padding="same",
-                               activation="relu"),  # (batch, 42, 1, 16)
-        tf.keras.layers.MaxPool2D((3, 1), padding="same"),  # (batch, 14, 1, 16)
-        tf.keras.layers.Dropout(0.1),  # (batch, 14, 1, 16)
-        tf.keras.layers.Flatten(),  # (batch, 224)
+                               activation="relu"),  # (batch, 32, 1, 24)
+        tf.keras.layers.MaxPool2D((3, 1), padding="same"),  # (batch, 10, 1, 24)
+        tf.keras.layers.Dropout(0.1),  # (batch, 10, 1, 24)
+        tf.keras.layers.Flatten(),  # (batch, 240)
         tf.keras.layers.Dense(16, activation="relu"),  # (batch, 16)
         tf.keras.layers.Dropout(0.1),  # (batch, 16)
         tf.keras.layers.Dense(4, activation="softmax")  # (batch, 4)
