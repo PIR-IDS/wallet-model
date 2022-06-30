@@ -39,9 +39,9 @@ import random
 LABEL_NAME = "gesture"
 DATA_NAME = "accel_ms2_xyz"
 folders = ["wallet"]
-nb_negative = 6
-nb_positive = 5
-taille_data = 256
+nb_negative = 8
+nb_positive = 7
+taille_data = 96
 
 
 def prepare_original_data(folder, name, data, file_to_read):  # pylint: disable=redefined-outer-name
@@ -152,27 +152,19 @@ def write_data(data_to_write, path):
 
 if __name__ == "__main__":
     for i in range(nb_positive):
-        create_file_for_rotation("output/custom_train/wallet", data_in_list("train/wallet", f"output_wallet_test{i+1}.txt"),f"custom_output_wallet_test{i+1}.txt" )
+        create_file_for_rotation("output/custom_train/wallet", data_in_list("train/wallet", f"output_wallet_gyroscope_test{i+1}.txt"),f"custom_output_wallet_test{i+1}.txt" )
 
     for i in range(nb_negative):
-        create_file_for_rotation("output/custom_train/negative", data_in_list("train/negative", f"output_negative_{i+1}.txt"), f"custom_output_negative_{i+1}.txt")
+        create_file_for_rotation("output/custom_train/negative", data_in_list("train/negative", f"output_negative_gyroscope_test{i+1}.txt"), f"custom_output_negative_{i+1}.txt")
 
     data = []  # pylint: disable=redefined-outer-name
+
     for idx1, folder in enumerate(folders):
         for idx2 in range(nb_positive):
             prepare_original_data(folder, "test%d" % (idx2 + 1), data,
-                                "./train/%s/output_%s_test%d.txt" % (folder, folder, idx2 + 1))
-
-    for idx in range(nb_negative):
-        prepare_original_data("negative", "negative%d" % (idx + 1), data,
-                            "./train/negative/output_negative_%d.txt" % (idx + 1))
-
-    for idx1, folder in enumerate(folders):
-        for idx2 in range(nb_positive):
-            prepare_original_data(folder, "test%d" % (idx2 + 1+ nb_positive), data,
                                 "./output/custom_train/%s/custom_output_%s_test%d.txt" % (folder, folder, idx2 + 1))
     for idx in range(nb_negative):
-        prepare_original_data("negative", "negative%d" % (idx + 1+ nb_negative), data,
+        prepare_original_data("negative", "negative%d" % (idx + 1), data,
                             "./output/custom_train/negative/custom_output_negative_%d.txt" % (idx + 1))
     generate_negative_data(data)
     print("data_length: " + str(len(data)))

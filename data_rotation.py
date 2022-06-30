@@ -85,6 +85,8 @@ def create_file_for_rotation(path, liste, file_name ):
     pathlib.Path(path ).mkdir(parents=True, exist_ok=True) 
     with open(str(path)+"/"+str(file_name) , 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
+
+        writer.writerows(rotation_1(rotation_3(liste)))
         writer.writerows(rotation_1(liste))
         writer.writerows(rotation_2(liste))
         writer.writerows(rotation_3(liste))

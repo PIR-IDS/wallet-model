@@ -10,7 +10,7 @@ from data_load import DataLoader
 import numpy as np
 import tensorflow as tf
 
-SEQ_LENGTH = 256  #number of lines in the data files
+SEQ_LENGTH = 96  #number of lines in the data files
 
 logdir = "output/logs/scalars/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
@@ -34,14 +34,14 @@ def build_cnn(seq_length):
     """Builds a convolutional neural network in Keras."""
     model = tf.keras.Sequential([
         tf.keras.layers.Conv2D(
-            8,  # filters
+            12,  # filters
             (4, 3), # convolution window size
             padding="same", 
             activation="relu",
             input_shape=(seq_length, 3, 1)),  # output_shape=(batch, 128, 3, 8)
         tf.keras.layers.MaxPool2D((3, 3)),  # (batch, 42, 1, 8)
         tf.keras.layers.Dropout(0.1),  # (batch, 42, 1, 8)
-        tf.keras.layers.Conv2D(16, (4, 1), padding="same",
+        tf.keras.layers.Conv2D(24, (4, 1), padding="same",
                                activation="relu"),  # (batch, 42, 1, 16)
         tf.keras.layers.MaxPool2D((3, 1), padding="same"),  # (batch, 14, 1, 16)
         tf.keras.layers.Dropout(0.1),  # (batch, 14, 1, 16)
