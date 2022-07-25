@@ -70,7 +70,7 @@ def build_cnn(seq_length):
         tf.keras.layers.Dropout(0.1),  # (batch, 16)
         tf.keras.layers.Dense(4, activation="softmax")  # (batch, 4)
     ])
-    model_path = os.path.join("./netmodels", "CNN")
+    model_path = os.path.join(".", "output", "netmodels", "CNN")
     print("Built CNN.")
     if not os.path.exists(model_path):
         os.makedirs(model_path)
