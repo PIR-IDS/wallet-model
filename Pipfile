@@ -8,7 +8,7 @@ prepare = "python data_prepare.py"
 split = "python data_split.py"
 train = "python train.py --model CNN"
 generate = "python -m hexrec xxd -i output/model.tflite output/model.cc"
-generate2 = "python -m hexrec xxd -i output/model_quantized.tflite output/model_quantized.cc"
+generate_quantized = "python -m hexrec xxd -i output/model_quantized.tflite output/model_quantized.cc"
 
 [dev-packages]
 

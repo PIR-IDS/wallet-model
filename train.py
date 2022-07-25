@@ -1,3 +1,23 @@
+# Lint as: python3
+# Copyright 2019 The TensorFlow Authors. All Rights Reserved.
+# Edited by Noé Chauveau and Romain Monier for the PIR-IDS project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ==============================================================================
+# pylint: disable=redefined-outer-name
+# pylint: disable=g-bad-import-order
+"""Build and train neural networks."""
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -6,11 +26,11 @@ import argparse
 import datetime
 import os
 from data_load import DataLoader
+from data_prepare import taille_data
 
 import numpy as np
 import tensorflow as tf
 
-SEQ_LENGTH = 96  #number of lines in the data files
 
 logdir = "output/logs/scalars/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
@@ -115,7 +135,7 @@ def train_net(
     pred = np.argmax(model.predict(test_data), axis=1)
     confusion = tf.math.confusion_matrix(labels=tf.constant(test_labels),
                                          predictions=tf.constant(pred),
-                                         num_classes=4)
+                                         num_classes=2)
     print(confusion)
     print("Loss {}, Accuracy {}".format(loss, acc))
     # Convert the model to the TensorFlow Lite format without quantization
@@ -146,7 +166,7 @@ if __name__ == "__main__":
     parser.add_argument("--model", "-m")
     args = parser.parse_args()
 
-    seq_length = SEQ_LENGTH
+    seq_length = taille_data
 
     print("Start to load data...")
 
