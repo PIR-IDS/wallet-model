@@ -26,9 +26,11 @@ import argparse
 import datetime
 import os
 from data_load import DataLoader
+from data_prepare import taille_data
 
 import numpy as np
 import tensorflow as tf
+
 
 logdir = "output/logs/scalars/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
@@ -52,39 +54,24 @@ def build_cnn(seq_length):
     """Builds a convolutional neural network in Keras."""
     model = tf.keras.Sequential([
         tf.keras.layers.Conv2D(
-            8, (4, 3),
-            padding="same",
+            12,  # filters
+            (4, 3), # convolution window size
+            padding="same", 
             activation="relu",
-            input_shape=(seq_length, 3, 1)),  # output_shape=(batch, 128, 3, 8)
-        tf.keras.layers.MaxPool2D((3, 3)),  # (batch, 42, 1, 8)
-        tf.keras.layers.Dropout(0.1),  # (batch, 42, 1, 8)
-        tf.keras.layers.Conv2D(16, (4, 1), padding="same",
-                               activation="relu"),  # (batch, 42, 1, 16)
-        tf.keras.layers.MaxPool2D((3, 1), padding="same"),  # (batch, 14, 1, 16)
-        tf.keras.layers.Dropout(0.1),  # (batch, 14, 1, 16)
-        tf.keras.layers.Flatten(),  # (batch, 224)
+            input_shape=(seq_length, 3, 1)),  # output_shape=(batch, 96, 3, 12)
+        tf.keras.layers.MaxPool2D((3, 3)),  # (batch, 32, 1, 12)
+        tf.keras.layers.Dropout(0.1),  # (batch, 32, 1, 12)
+        tf.keras.layers.Conv2D(24, (4, 1), padding="same",
+                               activation="relu"),  # (batch, 32, 1, 24)
+        tf.keras.layers.MaxPool2D((3, 1), padding="same"),  # (batch, 10, 1, 24)
+        tf.keras.layers.Dropout(0.1),  # (batch, 10, 1, 24)
+        tf.keras.layers.Flatten(),  # (batch, 240)
         tf.keras.layers.Dense(16, activation="relu"),  # (batch, 16)
         tf.keras.layers.Dropout(0.1),  # (batch, 16)
         tf.keras.layers.Dense(4, activation="softmax")  # (batch, 4)
     ])
-    model_path = os.path.join("./netmodels", "CNN")
+    model_path = os.path.join(".", "output", "netmodels", "CNN")
     print("Built CNN.")
-    if not os.path.exists(model_path):
-        os.makedirs(model_path)
-    model.load_weights("./netmodels/CNN/weights.h5")
-    return model, model_path
-
-
-def build_lstm(seq_length):
-    """Builds an LSTM in Keras."""
-    model = tf.keras.Sequential([
-        tf.keras.layers.Bidirectional(
-            tf.keras.layers.LSTM(22),
-            input_shape=(seq_length, 3)),  # output_shape=(batch, 44)
-        tf.keras.layers.Dense(4, activation="sigmoid")  # (batch, 4)
-    ])
-    model_path = os.path.join("./netmodels", "LSTM")
-    print("Built LSTM.")
     if not os.path.exists(model_path):
         os.makedirs(model_path)
     return model, model_path
@@ -103,10 +90,8 @@ def load_data(train_data_path, valid_data_path, test_data_path, seq_length):
 def build_net(args, seq_length):
     if args.model == "CNN":
         model, model_path = build_cnn(seq_length)
-    elif args.model == "LSTM":
-        model, model_path = build_lstm(seq_length)
     else:
-        print("Please input correct model name.(CNN  LSTM)")
+        print("Please input correct model name.(CNN)")
     return model, model_path
 
 
@@ -149,7 +134,7 @@ def train_net(
     pred = np.argmax(model.predict(test_data), axis=1)
     confusion = tf.math.confusion_matrix(labels=tf.constant(test_labels),
                                          predictions=tf.constant(pred),
-                                         num_classes=4)
+                                         num_classes=2)
     print(confusion)
     print("Loss {}, Accuracy {}".format(loss, acc))
     # Convert the model to the TensorFlow Lite format without quantization
@@ -180,7 +165,7 @@ if __name__ == "__main__":
     parser.add_argument("--model", "-m")
     args = parser.parse_args()
 
-    seq_length = 128
+    seq_length = taille_data
 
     print("Start to load data...")
 
