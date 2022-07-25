@@ -55,7 +55,7 @@ def prepare_original_data(folder, name, data, file_to_read):  # pylint: disable=
             data_new["name"] = name
             for idx, line in enumerate(lines):  # pylint: disable=unused-variable,redefined-outer-name
                 if len(line) == 3:
-                    if line[2] == "-" and line[0] == "-" and data_new[DATA_NAME]:  ## not sure about the  and line[0] == "-" condition
+                    if line[2] == "-" and line[0] == "-" and data_new[DATA_NAME]: 
                         data.append(data_new)
                         data_new = {}
                         data_new[LABEL_NAME] = folder
@@ -148,7 +148,7 @@ def write_data(data_to_write, path):
             f.write(dic)
             f.write("\n")
 
-#create_file_for_rotation("output/custom_train/wallet/custom_output_wallet_test1.txt", data_in_list("train/wallet", "output_wallet_test1.txt"))
+
 
 if __name__ == "__main__":
     for i in range(nb_positive):

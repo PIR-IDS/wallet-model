@@ -94,7 +94,3 @@ def create_file_for_rotation(path, liste, file_name ):
         writer.writerows(rotation_5(liste))
         writer.writerows(rotation_6(liste))
         writer.writerows(rotation_7(liste))
-
-
-#pathlib.Path("output/custom_train").mkdir(parents=True, exist_ok=True)
-#create_file_for_rotation("output/custom_train/wallet/custom_output_wallet_test1.txt", data_in_list("train/wallet", "output_wallet_test1.txt"))
