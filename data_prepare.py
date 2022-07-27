@@ -28,7 +28,10 @@ It will generate a new file with the following structure:
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from data_rotation import create_file_for_rotation
+from data_rotation import data_in_list
 
+import argparse
 from data_norm import data_norm
 from data_norm import data_in_list
 
@@ -40,12 +43,16 @@ import random
 LABEL_NAME = "gesture"
 DATA_NAME = "accel_ms2_xyz"
 folders = ["wallet"]
-nb_negative = 2
+nb_negative = 8
 nb_positive = 7
+
+nb_negative_norm = 8
+nb_positive_norm = 7
+
 taille_data = 96
 
 
-def prepare_original_data(folder, name, data, file_to_read):  # pylint: disable=redefined-outer-name
+def prepare_original_data(folder, name, data, file_to_read, squaresum = 0):  # pylint: disable=redefined-outer-name
     """Read collected data from files."""
     if folder != "negative":
         with open(file_to_read, "r") as f:
@@ -54,16 +61,27 @@ def prepare_original_data(folder, name, data, file_to_read):  # pylint: disable=
             data_new[LABEL_NAME] = folder
             data_new[DATA_NAME] = []
             data_new["name"] = name
-            for idx, line in enumerate(lines):  # pylint: disable=unused-variable,redefined-outer-name
-                if len(line) == 2:
-                    if line[0] == "-" and data_new[DATA_NAME]:  ## not sure about the  and line[0] == "-" condition
-                        data.append(data_new)
-                        data_new = {}
-                        data_new[LABEL_NAME] = folder
-                        data_new[DATA_NAME] = []
-                        data_new["name"] = name
-                    elif line[0] != "-":
-                        data_new[DATA_NAME].append([float(i) for i in line[0:2]])
+            for idx, line in enumerate(lines):
+                if squaresum :
+                    if len(line) == 2:
+                        if line[0] == "-" and data_new[DATA_NAME]:  ## not sure about the  and line[0] == "-" condition
+                            data.append(data_new)
+                            data_new = {}
+                            data_new[LABEL_NAME] = folder
+                            data_new[DATA_NAME] = []
+                            data_new["name"] = name
+                        elif line[0] != "-":
+                            data_new[DATA_NAME].append([float(i) for i in line[0:2]])
+                else :
+                    if len(line) == 3:
+                        if line[2] == "-" and line[0] == "-" and data_new[DATA_NAME]: 
+                            data.append(data_new)
+                            data_new = {}
+                            data_new[LABEL_NAME] = folder
+                            data_new[DATA_NAME] = []
+                            data_new["name"] = name
+                        elif line[2] != "-":
+                            data_new[DATA_NAME].append([float(i) for i in line[0:3]])  # pylint: disable=unused-variable,redefined-outer-name
             data.append(data_new)
     else:
         with open(file_to_read, "r") as f:
@@ -90,11 +108,11 @@ def generate_negative_data(data):  # pylint: disable=redefined-outer-name
     # Big movement -> around straight line
     for i in range(100):
         if i > 80:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+3}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+3}"}
         elif i > 60:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+2}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+2}"}
         else:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+1}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+1}"}
         start_x = (random.random() - 0.5) * 2000
         start_y = (random.random() - 0.5) * 2000
         start_z = (random.random() - 0.5) * 2000
@@ -111,11 +129,11 @@ def generate_negative_data(data):  # pylint: disable=redefined-outer-name
     # Random
     for i in range(100):
         if i > 80:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+3}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+3}"}
         elif i > 60:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+2}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+2}"}
         else:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+1}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+1}"}
         for j in range(taille_data):
             dic[DATA_NAME].append([(random.random() - 0.5) * 1000,
                                    (random.random() - 0.5) * 1000,
@@ -124,11 +142,11 @@ def generate_negative_data(data):  # pylint: disable=redefined-outer-name
     # Stay still
     for i in range(100):
         if i > 80:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+3}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+3}"}
         elif i > 60:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+2}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+2}"}
         else:
-            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative${nb_negative+1}"}
+            dic = {DATA_NAME: [], LABEL_NAME: "negative", "name": f"negative{nb_negative+1}"}
         start_x = (random.random() - 0.5) * 2000
         start_y = (random.random() - 0.5) * 2000
         start_z = (random.random() - 0.5) * 2000
@@ -150,22 +168,45 @@ def write_data(data_to_write, path):
             f.write("\n")
 
 
+
 if __name__ == "__main__":
-    for i in range(nb_positive):
-        data_norm("output/custom_train/wallet", data_in_list("train/wallet", f"output_wallet_gyroscope_test{i+1}.txt"),f"custom_output_wallet_norm_test{i+1}.txt" )
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--mode")
+    args = parser.parse_args()
+    if args.mode == "norm":
+        for i in range(nb_positive_norm):
+            data_norm("output/custom_train/wallet", data_in_list("train/wallet", f"output_wallet_gyroscope_test{i+1}.txt"),f"custom_output_wallet_norm_test{i+1}.txt" )
+    else :
+        for i in range(nb_positive):
+            create_file_for_rotation("output/custom_train/wallet", data_in_list("train/wallet", f"output_wallet_gyroscope_test{i+1}.txt"),f"custom_output_wallet_test{i+1}.txt" )
 
-    for i in range(nb_negative):
-        data_norm("output/custom_train/negative", data_in_list("train/negative", f"output_negative_gyroscope_test{i+1}.txt"), f"custom_output_negative_norm_{i+1}.txt")
-
+    if args.mode == "norm":
+        for i in range(nb_negative_norm):
+            data_norm("output/custom_train/negative", data_in_list("train/negative", f"output_negative_gyroscope_test{i+1}.txt"), f"custom_output_negative_norm_{i+1}.txt")
+    else:
+        for i in range(nb_negative):
+            create_file_for_rotation("output/custom_train/negative", data_in_list("train/negative", f"output_negative_gyroscope_test{i+1}.txt"), f"custom_output_negative_{i+1}.txt")
+    
     data = []  # pylint: disable=redefined-outer-name
+
     for idx1, folder in enumerate(folders):
-        for idx2 in range(nb_positive):
-            prepare_original_data(folder, "test%d" % (idx2 + 1), data,
-                                "./output/custom_train/%s/custom_output_%s_norm_test%d.txt" % (folder, folder, idx2 + 1))
-    for idx in range(nb_negative):
-        prepare_original_data("negative", "negative%d" % (idx + 1), data,
-                            "./output/custom_train/negative/custom_output_negative_norm_%d.txt" % (idx + 1))
-    #generate_negative_data(data)
+        if args.mode == "norm":
+            for idx2 in range(nb_positive_norm):
+                prepare_original_data(folder, "test%d" % (idx2 + 1), data, "./output/custom_train/%s/custom_output_%s_norm_test%d.txt" % (folder, folder, idx2 + 1), 1)
+        else :
+            for idx2 in range(nb_positive):
+                prepare_original_data(folder, "test%d" % (idx2 + 1), data, "./output/custom_train/%s/custom_output_%s_test%d.txt" % (folder, folder, idx2 + 1))
+    if args.mode == "norm":
+        for idx in range(nb_negative_norm):
+            prepare_original_data("negative", "negative%d" % (idx + 1), data,
+                            "./output/custom_train/negative/custom_output_negative_norm_%d.txt" % (idx + 1),1)
+    else:
+        for idx in range(nb_negative):
+            prepare_original_data("negative", "negative%d" % (idx + 1), data,
+                            "./output/custom_train/negative/custom_output_negative_%d.txt" % (idx + 1))
+                                
+    if args.mode != "norm":
+        generate_negative_data(data)
     print("data_length: " + str(len(data)))
     if not os.path.exists("./output/data"):
         os.makedirs("./output/data")

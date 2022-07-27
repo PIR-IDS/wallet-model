@@ -98,6 +98,17 @@ Run the following instructions to launch the training and convert the model in a
    ```
 The final model file will be located in: `output/model.cc`
 
+There is also another way to create the model by using norms. This approach is not working well, so it's only a PoC implementation to show that it is not an acceptable solution. If you still want to use it, you can do the following:
+
+<details>
+
+   ```sh
+   pipenv run prepare_norm && pipenv run split && pipenv run train_norm && pipenv run generate
+   ```
+
+</details>
+
+
 <!-- TREE STRUCTURE -->
 ## Tree Structure
 <details>
