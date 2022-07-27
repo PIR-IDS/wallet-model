@@ -38,6 +38,8 @@ tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
 
 def reshape_function(data, label):
     reshaped_data = tf.reshape(data, [-1, 3, 1])
+    if args.mode == "norm":
+        reshaped_data = tf.reshape(data, [-1, 2, 1])
     return reshaped_data, label
 
 
@@ -52,24 +54,44 @@ def calculate_model_size(model):
 
 def build_cnn(seq_length):
     """Builds a convolutional neural network in Keras."""
-    model = tf.keras.Sequential([
-        tf.keras.layers.Conv2D(
-            12,  # filters
-            (4, 3), # convolution window size
-            padding="same", 
-            activation="relu",
-            input_shape=(seq_length, 3, 1)),  # output_shape=(batch, 96, 3, 12)
-        tf.keras.layers.MaxPool2D((3, 3)),  # (batch, 32, 1, 12)
-        tf.keras.layers.Dropout(0.1),  # (batch, 32, 1, 12)
-        tf.keras.layers.Conv2D(24, (4, 1), padding="same",
-                               activation="relu"),  # (batch, 32, 1, 24)
-        tf.keras.layers.MaxPool2D((3, 1), padding="same"),  # (batch, 10, 1, 24)
-        tf.keras.layers.Dropout(0.1),  # (batch, 10, 1, 24)
-        tf.keras.layers.Flatten(),  # (batch, 240)
-        tf.keras.layers.Dense(16, activation="relu"),  # (batch, 16)
-        tf.keras.layers.Dropout(0.1),  # (batch, 16)
-        tf.keras.layers.Dense(4, activation="softmax")  # (batch, 4)
-    ])
+    if args.mode == "norm":
+        model = tf.keras.Sequential([
+            tf.keras.layers.Conv2D(
+                4,  # filters
+                (4, 2), # convolution window size
+                padding="valid", 
+                activation="relu",
+                input_shape=(seq_length, 2, 1)),  # output_shape=(batch, 93, 1, 8)
+            tf.keras.layers.MaxPool2D((3, 1)),  # (batch, 31, 1, 8)
+            tf.keras.layers.Dropout(0.1),  # (batch, 31, 1, 8)
+            tf.keras.layers.Conv2D(8, (4, 1), padding="same",
+                                activation="relu"),  # (batch, 31, 1, 16)
+            tf.keras.layers.MaxPool2D((3, 1), padding="same"),  # (batch, 10, 1, 16)
+            tf.keras.layers.Dropout(0.1),  # (batch, 14, 1, 16)
+            tf.keras.layers.Flatten(),  # (batch, 224)
+            tf.keras.layers.Dense(8, activation="relu"),  # (batch, 16)
+            tf.keras.layers.Dropout(0.1),  # (batch, 16)
+            tf.keras.layers.Dense(4, activation="softmax")  # (batch, 4)
+        ])
+    else :
+        model = tf.keras.Sequential([
+            tf.keras.layers.Conv2D(
+                12,  # filters
+                (4, 3), # convolution window size
+                padding="same", 
+                activation="relu",
+                input_shape=(seq_length, 3, 1)),  # output_shape=(batch, 96, 3, 12)
+            tf.keras.layers.MaxPool2D((3, 3)),  # (batch, 32, 1, 12)
+            tf.keras.layers.Dropout(0.1),  # (batch, 32, 1, 12)
+            tf.keras.layers.Conv2D(24, (4, 1), padding="same",
+                                activation="relu"),  # (batch, 32, 1, 24)
+            tf.keras.layers.MaxPool2D((3, 1), padding="same"),  # (batch, 10, 1, 24)
+            tf.keras.layers.Dropout(0.1),  # (batch, 10, 1, 24)
+            tf.keras.layers.Flatten(),  # (batch, 240)
+            tf.keras.layers.Dense(16, activation="relu"),  # (batch, 16)
+            tf.keras.layers.Dropout(0.1),  # (batch, 16)
+            tf.keras.layers.Dense(4, activation="softmax")  # (batch, 4)
+            ])
     model_path = os.path.join(".", "output", "netmodels", "CNN")
     print("Built CNN.")
     if not os.path.exists(model_path):
@@ -81,6 +103,7 @@ def load_data(train_data_path, valid_data_path, test_data_path, seq_length):
     data_loader = DataLoader(train_data_path,
                              valid_data_path,
                              test_data_path,
+                             args.mode,
                              seq_length=seq_length)
     data_loader.format()
     return data_loader.train_len, data_loader.train_data, data_loader.valid_len, \
@@ -163,6 +186,7 @@ def train_net(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", "-m")
+    parser.add_argument("--mode")
     args = parser.parse_args()
 
     seq_length = taille_data

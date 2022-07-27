@@ -35,9 +35,11 @@ DATA_NAME = "accel_ms2_xyz"
 class DataLoader(object):
     """Loads data and prepares for training."""
 
-    def __init__(self, train_data_path, valid_data_path, test_data_path,
+    def __init__(self, train_data_path, valid_data_path, test_data_path, mode,
                  seq_length):
         self.dim = 3
+        if mode:
+            self.dim = 2
         self.seq_length = seq_length
         self.label2id = {"wallet": 0, "negative": 1}
         self.train_data, self.train_label, self.train_len = self.get_data_file(
@@ -89,7 +91,6 @@ class DataLoader(object):
         # print(f"label = {len(label)}")
         for idx, (data, label) in enumerate(zip(data, label)):
             if (data == []):
-                print("ID : " + str(idx))
                 continue  # very dirty hack but we don't have time (fix this later)
             padded_data = self.pad(data, self.seq_length, self.dim)
             for num in range(padded_num):
