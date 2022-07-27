@@ -46,7 +46,7 @@ folders = ["wallet"]
 nb_negative = 8
 nb_positive = 7
 
-nb_negative_norm = 8
+nb_negative_norm = 2
 nb_positive_norm = 7
 
 taille_data = 96
@@ -91,15 +91,26 @@ def prepare_original_data(folder, name, data, file_to_read, squaresum = 0):  # p
             data_new[DATA_NAME] = []
             data_new["name"] = name
             for idx, line in enumerate(lines):
-                if len(line) == 2 and line[0] != "-":
-                    if len(data_new[DATA_NAME]) == taille_data:
-                        data.append(data_new)
-                        data_new = {}
-                        data_new[LABEL_NAME] = folder
-                        data_new[DATA_NAME] = []
-                        data_new["name"] = name
-                    else:
-                        data_new[DATA_NAME].append([float(i) for i in line[0:2]])
+                if squaresum :
+                    if len(line) == 2 and line[0] != "-":
+                        if len(data_new[DATA_NAME]) == taille_data:
+                            data.append(data_new)
+                            data_new = {}
+                            data_new[LABEL_NAME] = folder
+                            data_new[DATA_NAME] = []
+                            data_new["name"] = name
+                        else:
+                            data_new[DATA_NAME].append([float(i) for i in line[0:2]])
+                else:
+                    if len(line) == 3 and line[2] != "-":
+                        if len(data_new[DATA_NAME]) == taille_data:
+                            data.append(data_new)
+                            data_new = {}
+                            data_new[LABEL_NAME] = folder
+                            data_new[DATA_NAME] = []
+                            data_new["name"] = name
+                        else:
+                            data_new[DATA_NAME].append([float(i) for i in line[0:3]])
             data.append(data_new)
 
 
