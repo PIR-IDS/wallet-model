@@ -56,12 +56,6 @@
 
 This code will be used in order to train the wallet model for our IDS.
 
-To do that, it take as an input raw accelerometer data classified in two categories : "wallet" and "negative". The current input (inside the "train" folder) is the one used to generate the model of the "wallet-card" repository. These raw data also contains the gyroscope data, but these are ignored by the code. You can generate such raws input by running the "wallet-data-collector" and "ble-reader" repositories.
-
-The train model is a CNN based only on the accelerometer data, we tried to add the gyroscope data but the benefits weren't significant. Also, we tried several sampling rates and input length and it turns out that the most efficient parameters were 96 samples at a rate of 25Hz (~4 seconds of recording).
-
-This code is able to provide a model with an accuracy of 95% with a relatively small training set (less than 20 minutes of recording)
-
 ### Built With
 * [Python](https://www.python.org/)
 * [Tensorflow](https://www.tensorflow.org/)
@@ -95,6 +89,12 @@ This code is able to provide a model with an accuracy of 95% with a relatively s
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+
+To train the wallet model, it takes as an input the raw accelerometer data classified in two categories: "wallet" and "negative". The current input (inside the "train" folder) is the one used to generate the model of the [Wallet Card](https://github.com/PIR-IDS/wallet-card) repository. This raw data also contains the gyroscope data, but it is ignored by the code. You can generate such raw inputs by running the [Wallet Data Collector](https://github.com/PIR-IDS/wallet-data-collector) and [BLE Reader](https://github.com/PIR-IDS/ble-reader) repositories.
+
+The train model is a CNN based only on the accelerometer data, we tried to add the gyroscope data but the benefits weren't significant. Also, we tried several sampling rates and input length and it turns out that the most efficient parameters were 96 samples at a rate of 25Hz (~4 seconds of recording).
+
+This code is able to provide a model with an accuracy of 95% with a relatively small training set (less than 20 minutes of recording)
 
 ### Execution
 
